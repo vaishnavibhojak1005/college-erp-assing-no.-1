@@ -1,116 +1,733 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>College Task Manager</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College ERP student portal for attendance, timetable, results and fees.">
+  <title>Campus ERP | Student Dashboard</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f4f6f8;
-        }
+  <style>
+    :root {
+      --primary: #3157d5;
+      --primary-light: #edf2ff;
+      --sidebar: #17233f;
+      --text: #202b40;
+      --muted: #7b879b;
+      --border: #e8edf4;
+      --surface: #ffffff;
+      --background: #f5f7fb;
+      --green: #16845b;
+      --orange: #b96a12;
+      --radius: 15px;
+    }
 
-        h1 {
-            color: #243b53;
-        }
+    * { box-sizing: border-box; }
 
-        input, button {
-            padding: 10px;
-            margin: 5px 0;
-        }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
 
-        li {
-            margin: 12px 0;
-        }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
 
-        .done {
-            text-decoration: line-through;
-            color: gray;
-        }
-    </style>
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 245px;
+      flex-shrink: 0;
+      background: var(--sidebar);
+      color: white;
+      padding: 25px 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 12px 35px;
+      font-size: 19px;
+      font-weight: 750;
+    }
+
+    .brand-mark {
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #5276f5;
+      font-weight: 800;
+    }
+
+    .nav-label {
+      padding: 0 13px;
+      margin: 0 0 12px;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: #a6b2cc;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav button {
+      border: 0;
+      border-radius: 9px;
+      color: #c2cce0;
+      background: transparent;
+      padding: 12px;
+      text-align: left;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      transition: .2s;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      background: #2b3b60;
+      color: white;
+    }
+
+    .nav button.active {
+      box-shadow: inset 3px 0 #7c9aff;
+    }
+
+    .nav-icon { width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 18px 12px 0;
+      border-top: 1px solid #35415b;
+      color: #bac6dd;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .main { flex: 1; min-width: 0; }
+
+    .topbar {
+      height: 76px;
+      padding: 0 34px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .breadcrumb { color: var(--muted); font-size: 13px; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search {
+      width: 210px;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      outline-color: var(--primary);
+    }
+
+    .icon-button {
+      border: 0;
+      background: white;
+      font-size: 19px;
+      padding: 7px;
+    }
+
+    .avatar {
+      height: 39px;
+      width: 39px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #e0e9ff;
+      color: var(--primary);
+      font-weight: 750;
+    }
+
+    .content {
+      max-width: 1500px;
+      margin: auto;
+      padding: 32px 34px 45px;
+    }
+
+    .welcome {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: clamp(23px, 3vw, 30px);
+      margin: 0 0 8px;
+      letter-spacing: -.7px;
+    }
+
+    h2 { font-size: 17px; margin: 0; }
+
+    .subheading {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .term {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 13px;
+      color: var(--text);
+    }
+
+    .section { margin-top: 27px; }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    .section-heading a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 21px;
+      min-width: 0;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat-icon {
+      width: 37px;
+      height: 37px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-light);
+      font-size: 18px;
+    }
+
+    .stat-number {
+      font-size: 29px;
+      font-weight: 750;
+      margin: 18px 0 7px;
+      letter-spacing: -.8px;
+    }
+
+    .stat-foot { font-size: 11px; color: var(--muted); }
+
+    .positive { color: var(--green); }
+    .warning { color: var(--orange); }
+
+    .progress {
+      height: 6px;
+      background: #edf0f6;
+      border-radius: 10px;
+      margin-top: 13px;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 92%;
+      background: #2ba879;
+      border-radius: 10px;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+      gap: 20px;
+    }
+
+    .schedule {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+
+    .schedule th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 550;
+      background: #f8faff;
+    }
+
+    .schedule th, .schedule td {
+      padding: 14px 9px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .schedule tr:last-child td { border-bottom: 0; }
+
+    .subject { font-weight: 650; font-size: 12px; }
+    .secondary { color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 650;
+      background: #e8f8f0;
+      color: var(--green);
+    }
+
+    .attendance-wrap {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 5px;
+    }
+
+    .donut {
+      width: 125px;
+      height: 125px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: conic-gradient(#3157d5 0 92%, #e9eef9 92% 100%);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .donut::before {
+      content: "";
+      position: absolute;
+      width: 91px;
+      height: 91px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .donut strong { z-index: 1; font-size: 23px; }
+
+    .legend {
+      display: grid;
+      gap: 13px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend div { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 9px; height: 9px; border-radius: 3px; background: var(--primary); }
+    .dot.gray { background: #e9eef9; }
+
+    .notice-list { display: grid; gap: 0; }
+
+    .notice {
+      display: flex;
+      gap: 13px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notice:last-child { border-bottom: 0; }
+
+    .notice-icon {
+      flex-shrink: 0;
+      width: 39px;
+      height: 39px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #edf2ff;
+    }
+
+    .notice strong { font-size: 12px; line-height: 1.5; }
+    .notice p { font-size: 11px; color: var(--muted); margin: 5px 0 0; }
+
+    .feature-panel { display: none; }
+    .feature-panel.active { display: block; }
+
+    .feature-description {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .feature-list {
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2.2;
+    }
+
+    .primary-button {
+      background: var(--primary);
+      color: white;
+      border: 0;
+      padding: 11px 15px;
+      border-radius: 9px;
+      font-weight: 650;
+    }
+
+    .mobile-menu { display: none; }
+
+    @media (max-width: 1100px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .columns { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar {
+        position: fixed;
+        z-index: 5;
+        inset: 0 auto 0 0;
+        transform: translateX(-100%);
+        transition: transform .2s;
+        box-shadow: 10px 0 30px #0002;
+      }
+
+      .sidebar.open { transform: translateX(0); }
+      .topbar { padding: 0 16px; height: 65px; }
+      .content { padding: 25px 16px; }
+      .search { width: 130px; }
+      .mobile-menu { display: inline-block; }
+      .welcome { align-items: flex-start; flex-direction: column; }
+      .stats { gap: 10px; }
+      .card { padding: 15px; }
+      .stat-number { font-size: 24px; }
+      .attendance-wrap { flex-wrap: wrap; }
+      .schedule th, .schedule td { padding: 11px 5px; }
+      .breadcrumb { display: none; }
+    }
+  </style>
 </head>
+
 <body>
-    <h1>College Task Manager</h1>
-    <p>Organize your college assignments.</p>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">CE</div>
+      <span>Campus ERP</span>
+    </div>
 
-    <form id="task-form">
-        <input id="task-input"
-               placeholder="Enter a task"
-               required>
-        <button type="submit">Add Task</button>
-    </form>
+    <p class="nav-label">STUDENT PORTAL</p>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+      <button data-page="profile"><span class="nav-icon">♙</span>My Profile</button>
+      <button data-page="attendance"><span class="nav-icon">◷</span>Attendance</button>
+      <button data-page="timetable"><span class="nav-icon">▤</span>Timetable</button>
+      <button data-page="results"><span class="nav-icon">▧</span>Examination Results</button>
+      <button data-page="fees"><span class="nav-icon">₹</span>Fee Details</button>
+      <button data-page="notices"><span class="nav-icon">♧</span>Notices</button>
+    </nav>
 
-    <ul id="task-list"></ul>
+    <div class="sidebar-footer">
+      <strong>College ERP Project</strong><br>
+      Student Portal · Demo Version<br>
+      <span>Academic Year 2026–27</span>
+    </div>
+  </aside>
 
-    <script>
-        const form = document.getElementById("task-form");
-        const input = document.getElementById("task-input");
-        const list = document.getElementById("task-list");
+  <main class="main">
+    <header class="topbar">
+      <div class="top-actions">
+        <button class="icon-button mobile-menu" id="menuButton" aria-label="Toggle menu">☰</button>
+        <span class="breadcrumb">College ERP / Student Portal</span>
+      </div>
+      <div class="top-actions">
+        <input class="search" id="searchInput" type="search" placeholder="Search portal..." aria-label="Search portal">
+        <button class="icon-button" id="notificationButton" aria-label="Notifications">♧</button>
+        <div class="avatar" title="Student profile">VB</div>
+      </div>
+    </header>
 
-        let tasks = JSON.parse(
-            localStorage.getItem("tasks") || "[]"
-        );
+    <div class="content">
+      <section class="feature-panel active" id="page-dashboard">
+        <div class="welcome">
+          <div>
+            <h1>Good morning, Vaishnavi 👋</h1>
+            <p class="subheading">Here’s your academic overview for today.</p>
+          </div>
+          <span class="term">📅 Semester 5 · 2026–27</span>
+        </div>
 
-        function saveTasks() {
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-            renderTasks();
-        }
+        <div class="stats">
+          <article class="card">
+            <div class="stat-top"><span>Overall Attendance</span><span class="stat-icon">◷</span></div>
+            <div class="stat-number">92%</div>
+            <div class="stat-foot positive">On track for the semester</div>
+            <div class="progress"><span></span></div>
+          </article>
 
-        function renderTasks() {
-            list.innerHTML = "";
+          <article class="card">
+            <div class="stat-top"><span>Pending Fees</span><span class="stat-icon">₹</span></div>
+            <div class="stat-number">₹4,500</div>
+            <div class="stat-foot warning">Demo balance · Verify with office</div>
+          </article>
 
-            tasks.forEach((task, index) => {
-                const item = document.createElement("li");
-                const label = document.createElement("span");
+          <article class="card">
+            <div class="stat-top"><span>Upcoming Exams</span><span class="stat-icon">▤</span></div>
+            <div class="stat-number">3</div>
+            <div class="stat-foot">Scheduled this semester</div>
+          </article>
 
-                label.textContent = task.title;
+          <article class="card">
+            <div class="stat-top"><span>Assignments</span><span class="stat-icon">✓</span></div>
+            <div class="stat-number">4</div>
+            <div class="stat-foot">Demo pending assignment count</div>
+          </article>
+        </div>
 
-                if (task.done) {
-                    label.className = "done";
-                }
+        <div class="section columns">
+          <article class="card">
+            <div class="section-heading">
+              <h2>Today's Timetable</h2>
+              <a href="#" data-open="timetable">View timetable →</a>
+            </div>
 
-                const complete = document.createElement("button");
-                complete.textContent = task.done ? "Undo" : "Complete";
+            <table class="schedule">
+              <thead>
+                <tr><th>TIME</th><th>SUBJECT</th><th>ROOM</th><th>STATUS</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>09:00 AM</td>
+                  <td><div class="subject">Data Structures</div><div class="secondary">Prof. Sharma</div></td>
+                  <td>Lab 02</td><td><span class="pill">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>10:00 AM</td>
+                  <td><div class="subject">Database Management</div><div class="secondary">Prof. Patel</div></td>
+                  <td>Room 204</td><td><span class="pill">Upcoming</span></td>
+                </tr>
+                <tr>
+                  <td>11:30 AM</td>
+                  <td><div class="subject">Operating Systems</div><div class="secondary">Prof. Rao</div></td>
+                  <td>Room 108</td><td><span class="pill">Upcoming</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
 
-                complete.onclick = () => {
-                    tasks[index].done = !tasks[index].done;
-                    saveTasks();
-                };
+          <article class="card">
+            <div class="section-heading"><h2>Attendance Overview</h2><a href="#" data-open="attendance">Details →</a></div>
+            <div class="attendance-wrap">
+              <div class="donut" role="img" aria-label="92 percent attendance"><strong>92%</strong></div>
+              <div class="legend">
+                <div><span class="dot"></span>Present: 92%</div>
+                <div><span class="dot gray"></span>Absent: 8%</div>
+                <div style="color:#202b40;font-weight:650">Minimum target: 75%</div>
+              </div>
+            </div>
+            <p class="secondary">Illustrative attendance figures for the project demo.</p>
+          </article>
+        </div>
 
-                const remove = document.createElement("button");
-                remove.textContent = "Delete";
+        <section class="section card">
+          <div class="section-heading">
+            <h2>Latest Notices</h2>
+            <a href="#" data-open="notices">All notices →</a>
+          </div>
+          <div class="notice-list">
+            <div class="notice">
+              <div class="notice-icon">📅</div>
+              <div><strong>Mid-semester timetable published</strong><p>Academic Office · 14 October 2026</p></div>
+            </div>
+            <div class="notice">
+              <div class="notice-icon">₹</div>
+              <div><strong>Fee payment deadline approaching</strong><p>Accounts Office · Check your official fee portal</p></div>
+            </div>
+            <div class="notice">
+              <div class="notice-icon">📚</div>
+              <div><strong>Library schedule updated</strong><p>Library · Please check the latest opening hours</p></div>
+            </div>
+          </div>
+        </section>
+      </section>
 
-                remove.onclick = () => {
-                    tasks.splice(index, 1);
-                    saveTasks();
-                };
+      <section class="feature-panel" id="page-profile">
+        <h1>My Profile</h1>
+        <p class="subheading">Student information · Demonstration data</p>
+        <div class="section card">
+          <h2>Student Details</h2>
+          <p class="feature-description">This prototype illustrates the student profile area of the College ERP.</p>
+          <ul class="feature-list">
+            <li>Name: Vaishnavi Bhojak</li>
+            <li>Student ID: Demo Student</li>
+            <li>Programme: Computer Science</li>
+            <li>Semester: 5</li>
+            <li>Academic year: 2026–27</li>
+          </ul>
+          <p class="secondary">Replace demonstration details with verified information before a real deployment.</p>
+        </div>
+      </section>
 
-                item.append(label, " ", complete, " ", remove);
-                list.appendChild(item);
-            });
-        }
+      <section class="feature-panel" id="page-attendance">
+        <h1>Attendance</h1>
+        <p class="subheading">Illustrative semester attendance summary.</p>
+        <div class="section stats">
+          <article class="card"><div class="stat-top">Overall Attendance</div><div class="stat-number">92%</div><span class="pill">Above 75% target</span></article>
+          <article class="card"><div class="stat-top">Present</div><div class="stat-number">92</div><div class="stat-foot">Illustrative sessions</div></article>
+          <article class="card"><div class="stat-top">Absent</div><div class="stat-number">8</div><div class="stat-foot">Illustrative sessions</div></article>
+        </div>
+        <div class="section card"><h2>Subject Attendance</h2>
+          <table class="schedule"><thead><tr><th>SUBJECT</th><th>ATTENDANCE</th></tr></thead>
+          <tbody><tr><td>Data Structures</td><td>94%</td></tr><tr><td>Database Management</td><td>90%</td></tr><tr><td>Operating Systems</td><td>92%</td></tr></tbody></table>
+        </div>
+      </section>
 
-        form.addEventListener("submit", event => {
-            event.preventDefault();
+      <section class="feature-panel" id="page-timetable">
+        <h1>Class Timetable</h1>
+        <p class="subheading">Weekly class schedule · Sample data</p>
+        <div class="section card">
+          <table class="schedule"><thead><tr><th>TIME</th><th>SUBJECT</th><th>FACULTY</th><th>ROOM</th></tr></thead>
+          <tbody>
+          <tr><td>09:00 AM</td><td>Data Structures</td><td>Prof. Sharma</td><td>Lab 02</td></tr>
+          <tr><td>10:00 AM</td><td>Database Management</td><td>Prof. Patel</td><td>204</td></tr>
+          <tr><td>11:30 AM</td><td>Operating Systems</td><td>Prof. Rao</td><td>108</td></tr>
+          <tr><td>01:00 PM</td><td>Computer Networks</td><td>Prof. Mehta</td><td>210</td></tr>
+          </tbody></table>
+        </div>
+      </section>
 
-            const title = input.value.trim();
+      <section class="feature-panel" id="page-results">
+        <h1>Examination Results</h1>
+        <p class="subheading">Academic performance · Placeholder results</p>
+        <div class="section card">
+          <h2>Semester Results</h2>
+          <p class="feature-description">Actual examination results must come from an authorized academic record system.</p>
+          <table class="schedule"><thead><tr><th>SEMESTER</th><th>STATUS</th></tr></thead>
+          <tbody><tr><td>Semester 4</td><td>Sample data not configured</td></tr><tr><td>Semester 5</td><td>Awaiting results</td></tr></tbody></table>
+        </div>
+      </section>
 
-            if (!title) return;
+      <section class="feature-panel" id="page-fees">
+        <h1>Fee Details</h1>
+        <p class="subheading">Fee management · Demonstration only</p>
+        <div class="section stats">
+          <article class="card"><div class="stat-top">Illustrative total fees</div><div class="stat-number">₹25,000</div></article>
+          <article class="card"><div class="stat-top">Illustrative paid amount</div><div class="stat-number">₹20,500</div></article>
+          <article class="card"><div class="stat-top">Illustrative balance</div><div class="stat-number">₹4,500</div><div class="stat-foot warning">Not a real payment statement</div></article>
+        </div>
+        <div class="section card"><h2>Payment Information</h2><p class="feature-description">Connect this section to an authorized college accounts system before accepting or displaying real payments. This demo does not process payments.</p></div>
+      </section>
 
-            tasks.push({
-                title: title,
-                done: false
-            });
+      <section class="feature-panel" id="page-notices">
+        <h1>College Notices</h1>
+        <p class="subheading">Updates for students · Sample notices</p>
+        <div class="section card notice-list">
+          <div class="notice"><div class="notice-icon">📅</div><div><strong>Mid-semester timetable published</strong><p>Academic Office · 14 October 2026</p></div></div>
+          <div class="notice"><div class="notice-icon">₹</div><div><strong>Fee payment deadline approaching</strong><p>Accounts Office · Check official information</p></div></div>
+          <div class="notice"><div class="notice-icon">📚</div><div><strong>Library schedule updated</strong><p>Library · Check the official notice board</p></div></div>
+        </div>
+      </section>
 
-            input.value = "";
-            saveTasks();
-        });
+      <footer class="section" style="text-align:center;color:#7b879b;font-size:11px">
+        Campus ERP · Academic Year 2026–27 · Student dashboard prototype
+      </footer>
+    </div>
+  </main>
+</div>
 
-        renderTasks();
-    </script>
+<script>
+  const navButtons = document.querySelectorAll("[data-page]");
+  const panels = document.querySelectorAll(".feature-panel");
+  const sidebar = document.getElementById("sidebar");
+
+  function showPage(page) {
+    const target = document.getElementById("page-" + page);
+    if (!target) return;
+
+    panels.forEach(panel => panel.classList.remove("active"));
+    target.classList.add("active");
+
+    navButtons.forEach(button => {
+      button.classList.toggle("active", button.dataset.page === page);
+    });
+
+    sidebar.classList.remove("open");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  navButtons.forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
+  });
+
+  document.querySelectorAll("[data-open]").forEach(link => {
+    link.addEventListener("click", event => {
+      event.preventDefault();
+      showPage(link.dataset.open);
+    });
+  });
+
+  document.getElementById("menuButton").addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+  });
+
+  document.getElementById("notificationButton").addEventListener("click", () => {
+    showPage("notices");
+  });
+
+  document.getElementById("searchInput").addEventListener("keydown", event => {
+    if (event.key !== "Enter") return;
+
+    const query = event.target.value.trim().toLowerCase();
+    const pages = {
+      dashboard: ["dashboard", "home", "overview"],
+      profile: ["profile", "student", "personal"],
+      attendance: ["attendance", "present", "absent"],
+      timetable: ["timetable", "schedule", "class", "subject"],
+      results: ["result", "exam", "examination", "marks"],
+      fees: ["fee", "fees", "payment", "balance"],
+      notices: ["notice", "announcement", "update"]
+    };
+
+    const match = Object.entries(pages).find(([, words]) =>
+      words.some(word => word.includes(query) || query.includes(word))
+    );
+
+    if (!query) {
+      showPage("dashboard");
+    } else if (match) {
+      showPage(match[0]);
+    } else {
+      alert("No matching section found. Try attendance, timetable, results, fees or notices.");
+    }
+  });
+</script>
 </body>
 </html>
