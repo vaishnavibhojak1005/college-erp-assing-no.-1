@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>College Task Manager</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f4f6f8;
+        }
+
+        h1 {
+            color: #243b53;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        li {
+            margin: 12px 0;
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>College Task Manager</h1>
+    <p>Organize your college assignments.</p>
+
+    <form id="task-form">
+        <input id="task-input"
+               placeholder="Enter a task"
+               required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <ul id="task-list"></ul>
+
+    <script>
+        const form = document.getElementById("task-form");
+        const input = document.getElementById("task-input");
+        const list = document.getElementById("task-list");
+
+        let tasks = JSON.parse(
+            localStorage.getItem("tasks") || "[]"
+        );
+
+        function saveTasks() {
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function renderTasks() {
+            list.innerHTML = "";
+
+            tasks.forEach((task, index) => {
+                const item = document.createElement("li");
+                const label = document.createElement("span");
+
+                label.textContent = task.title;
+
+                if (task.done) {
+                    label.className = "done";
+                }
+
+                const complete = document.createElement("button");
+                complete.textContent = task.done ? "Undo" : "Complete";
+
+                complete.onclick = () => {
+                    tasks[index].done = !tasks[index].done;
+                    saveTasks();
+                };
+
+                const remove = document.createElement("button");
+                remove.textContent = "Delete";
+
+                remove.onclick = () => {
+                    tasks.splice(index, 1);
+                    saveTasks();
+                };
+
+                item.append(label, " ", complete, " ", remove);
+                list.appendChild(item);
+            });
+        }
+
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const title = input.value.trim();
+
+            if (!title) return;
+
+            tasks.push({
+                title: title,
+                done: false
+            });
+
+            input.value = "";
+            saveTasks();
+        });
+
+        renderTasks();
+    </script>
+</body>
+</html>
